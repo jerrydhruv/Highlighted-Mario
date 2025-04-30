@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Memory Game</title>
+    <style>
+        .box-container {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .box {
+            width: 100px;
+            height: 100px;
+            background-image: url("Mario_image.jpeg");
+            background-size: cover;
+            border: 2px solid black;
+            cursor: pointer;
+        }
+
+        .highlighted {
+            border: 4px solid rgb(62, 7, 150);
+        }
+
+        #restartBtn {
+            display: none;
+            margin-top: 10px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to bottom right, #ade8f4, #caf0f8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        
+        .container {
+            background-color: rgb(48, 8, 122);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.1);
+            width: fit-content;
+            max-width: 90%;
+        }
+        
+        h2 {
+            margin-bottom: 10px;
+            font-size: 26px;
+            color: #333;
+        }
+        
+        p {
+            color: #555;
+            margin: 5px 0;
+        }
+        
+        button {
+            margin: 10px 5px;
+            padding: 8px 16px;
+            font-size: 16px;
+            border: none;
+            background-color: #0078d4;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background-color: #005fa3;
+        }
+        
+        .box-container {
+            display: grid;
+            grid-template-columns: repeat(4, 80px);
+            gap: 12px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .box {
+            width: 80px;
+            height: 80px;
+            background-color: #fff;
+            border: 2px solid #999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+        
+        .box:hover {
+            transform: scale(1.05);
+            border-color: #0078d4;
+        }
+        
+        .highlighted {
+            border: 4px solid rgb(62, 7, 150);
+        }
+    </style>
+</head>
+<body>
+
+    <h2>🎮 Test Your Memory: Click the Highlighted Mario!</h2>
+    <p>A random Mario box will highlight. Click it before time runs out!</p>
+    <p id="score">Score: 0</p>
+    <p id="timer">Time Left: 55</p>
+    <button onclick="startGame()">Start Game</button>
+    <button id="restartBtn" onclick="startGame()">Restart Game</button>
+
+    <div class="box-container">
+        <!-- 12 boxes -->
+        <div class="box">
+            <p class="emoji">😂</p>
+        </div>
+        <div class="box">
+            <p class="emoji">🚀</p>
+        </div>
+        <div class="box">
+            <p class="emoji">🎓</p>
+        </div>
+        <div class="box">
+            <p class="emoji">💡</p>
+        </div>
+        <div class="box">
+            <p class="emoji">😉</p>
+        </div>
+        <div class="box">
+            <p class="emoji">👀</p>
+        </div>
+        <div class="box">
+            <p class="emoji">✨</p>
+        </div>
+        <div class="box">
+            <p class="emoji">👾</p>
+        </div>
+        <div class="box">
+            <p class="emoji">🎂</p>
+        </div>
+        <div class="box">
+            <p class="emoji">😎</p>
+        </div>
+        <div class="box">
+            <p class="emoji">😒</p>
+        </div>
+        <div class="box">
+            <p class="emoji">🤣</p>
+        </div>    
+    </div>
+
+    <script>
+        let score = 0;
+        let currentBox = null;
+        let gameActive = false;
+        let timer;
+        let timeLeft = 30;
+
+        function getRandomBox() {
+            const boxes = document.querySelectorAll('.box');
+            return boxes[Math.floor(Math.random() * boxes.length)];
+        }
+
+        function clearHighlight() {
+            document.querySelectorAll('.box').forEach(box => {
+                box.classList.remove('highlighted');
+            });
+        }
+
+        function highlightBox(box) {
+            if (box) {
+                box.classList.add('highlighted');
+                currentBox = box;
+            }
+        }
+
+        function endGame() {
+            gameActive = false;
+            clearInterval(timer);
+            clearHighlight();
+            alert("Game Over! Final Score: " + score);
+            document.getElementById('restartBtn').style.display = 'inline-block';
+        }
+
+        function updateTimer() {
+            document.getElementById('timer').textContent = 'Time Left: ' + timeLeft;
+            if (timeLeft <= 0) {
+                endGame();
+            }
+            timeLeft--;
+        }
+
+        function startGame() {
+            score = 0;
+            timeLeft = 30;
+            gameActive = true;
+            document.getElementById('score').textContent = 'Score: ' + score;
+            document.getElementById('restartBtn').style.display = 'none';
+            updateTimer();
+            timer = setInterval(updateTimer, 1000);
+
+            const boxes = document.querySelectorAll('.box');
+            boxes.forEach(box => {
+                box.onclick = () => {
+                    if (!gameActive) return;
+
+                    if (box === currentBox) {
+                        score++;
+                        document.getElementById('score').textContent = 'Score: ' + score;
+                        clearHighlight();
+                        highlightBox(getRandomBox());
+                    } else {
+                        endGame();
+                    }
+                };
+            });
+
+            clearHighlight();
+            highlightBox(getRandomBox());
+        }
+    </script>
+</body>
+</html>
